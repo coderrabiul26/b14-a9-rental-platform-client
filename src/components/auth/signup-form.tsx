@@ -9,13 +9,7 @@ import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/shared/google-icon";
 import { toast } from "@/components/ui/toast";
 import { authClient } from "@/lib/auth-client";
-
-type SignUpData = {
-  name: string;
-  email: string;
-  image: string;
-  password: string;
-};
+import { TUser } from "@/types";
 
 /**
  * Sign up form.
@@ -35,7 +29,7 @@ const SignUpForm = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const user = Object.fromEntries(formData.entries()) as SignUpData;
+    const user = Object.fromEntries(formData.entries()) as TUser;
 
     // Password validation: must have an uppercase letter, a lowercase letter,
     // and a length of at least 6 characters.

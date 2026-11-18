@@ -54,7 +54,7 @@ const HeaderActions = async () => {
         variant="ghost"
         size="lg"
         className="gap-1.5"
-        render={<Link href="/dashboard" />}
+        render={<Link href={`/dashboard/${session.user?.role || 'customer'}`} />}
       >
         <LayoutDashboardIcon className="size-4" />
         Dashboard

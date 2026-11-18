@@ -33,7 +33,7 @@ const LogoutButton = () => {
       timeout: 3000,
     });
 
-    router.push("/");
+    router.push("/signin");
     router.refresh();
   };
 
