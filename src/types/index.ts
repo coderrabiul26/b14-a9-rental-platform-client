@@ -21,3 +21,44 @@ export type TSidebarMenuGroup = {
   label: string;
   items: TSidebarMenuItem[];
 };
+
+/* ────────────────────────────────────────────────────────────
+   Add Equipment (owner listing form)
+   ──────────────────────────────────────────────────────────── */
+
+/** How long the equipment can be rented for. */
+export type TRentalType = "Daily" | "Weekly" | "Monthly";
+
+/** Condition of the equipment being listed. */
+export type TEquipmentCondition = "New" | "Like New" | "Good" | "Fair";
+
+/** A new listing always starts as "pending" until an admin reviews it. */
+export type TEquipmentStatus = "pending" | "approved" | "rejected";
+
+/**
+ * The payload sent to the server when an owner submits the
+ * "Add Equipment" form.
+ *
+ * = every form field  +  ownerEmail  +  status
+ */
+export type TEquipmentSubmission = {
+  name: string;
+  description: string;
+  category: string;
+  location: string;
+  rentalPrice: number;
+  rentalType: TRentalType;
+  availableQuantity: number;
+  condition: TEquipmentCondition;
+  brand: string;
+  model: string;
+  /** Public URL of the photo hosted on ImgBB (not the File itself). */
+  image: string;
+  terms: string;
+
+  /* --- the 2 extra pieces of information --- */
+  /** Email of the logged-in owner (from the session). */
+  ownerEmail: string;
+  /** Always "pending" when the form is submitted. */
+  status: TEquipmentStatus;
+};

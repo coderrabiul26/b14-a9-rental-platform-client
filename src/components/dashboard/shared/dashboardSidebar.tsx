@@ -133,7 +133,7 @@ const DashboardSidebar = async() => {
 
 
     const sidebarItems= roleBasedSidebarItems[role]
-    console.log(sidebarItems);
+  
 
   return (
     <Sidebar collapsible="offcanvas">
