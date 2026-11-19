@@ -62,3 +62,14 @@ export type TEquipmentSubmission = {
   /** Always "pending" when the form is submitted. */
   status: TEquipmentStatus;
 };
+
+/**
+ * One row in the owner's "My Equipment" table.
+ *
+ * It is the same payload the add-equipment form sends, plus the `_id`
+ * the server stores it with — that `_id is what the Update / Delete /
+ * View Details actions need to know WHICH row was clicked.
+ */
+export type TOwnerEquipment = TEquipmentSubmission & {
+  _id: string;
+};
