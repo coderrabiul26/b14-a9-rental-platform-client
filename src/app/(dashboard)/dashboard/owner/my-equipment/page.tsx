@@ -1,9 +1,5 @@
-"use client";
-
-import React from "react";
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { EyeIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,10 +19,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { toast } from "@/components/ui/toast";
 import type { TEquipmentStatus, TOwnerEquipment } from "@/types";
-import { authClient } from "@/lib/auth-client";
 import { getEquipment } from "@/lib/api/equipment";
+import { EquipmentRowActions } from "@/components/owner/equipmentRowActions";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 /* ────────────────────────────────────────────────────────────
    ① DEMO DATA — replace this with the answer of YOUR API call.
@@ -49,88 +46,57 @@ const STATUS_STYLES: Record<TEquipmentStatus, string> = {
  * UI only: the 3 action buttons call the handlers at the bottom,
  * each one filled with a step-by-step TODO for you.
  */
-const MyEquipmentPage = () => {
-  const {data: session}=authClient.useSession()
+const MyEquipmentPage = async() => {
+ const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   const user= session?.user
+  console.log(user);
   
- const [equipmentData, setEquipmentData] = useState([]);
-
-  useEffect(() => {
-    const fetchEquipment = async () => {
-      if (!user?.email) return;
-
-      const data = await getEquipment(`ownerEmail=${user.email}`);
-
-      setEquipmentData(data);
-    };
-
-    fetchEquipment();
-  }, [user?.email]);
+ 
+    const equipmentData = await getEquipment(`ownerEmail=${user?.email}`);
+    console.log(equipmentData);
 
 
 
-  const handleViewDetails = (item: TOwnerEquipment) => {
-    // TODO (you): show the full equipment info.
-    //
-    // Option A — separate page (simplest):
-    //   router.push(`/dashboard/owner/my-equipment/${item._id}`);
-    //   → creates a page that reads `params.id` and fetches that one item.
-    //
-    // Option B — open a dialog/modal on this page and pass `item` to it.
-    //   (you already have <AlertDialog> / <Dialog> in components/ui)
-    //
-    // The `_id` is how the server knows WHICH row you clicked.
-    console.log("View details:", item._id);
-  };
+
+  // const handleViewDetails = (item: TOwnerEquipment) => {
+  //   // TODO (you): show the full equipment info.
+  //   //
+  //   // Option A — separate page (simplest):
+  //   //   router.push(`/dashboard/owner/my-equipment/${item._id}`);
+  //   //   → creates a page that reads `params.id` and fetches that one item.
+  //   //
+  //   // Option B — open a dialog/modal on this page and pass `item` to it.
+  //   //   (you already have <AlertDialog> / <Dialog> in components/ui)
+  //   //
+  //   // The `_id` is how the server knows WHICH row you clicked.
+  //   console.log("View details:", item._id);
+  // };
 
   /* ──────────────────────────────────────────────────────────
      ▸ UPDATE  (edit one row)
      ────────────────────────────────────────────────────────── */
-  const handleUpdate = (item: TOwnerEquipment) => {
-    // TODO (you): open your edit page / form (router is set up above).
-    //
-    //   router.push(`/dashboard/owner/update-equipment/${item._id}`);
-    //
-    // Tip: your update form can be a copy of the Add Equipment form —
-    // pre-fill it with `item` (defaultValue={item.name} …) and on submit
-    // send PUT / PATCH instead of POST:
-    //
-    //   await fetch(`/api/equipment/${item._id}`, {
-    //     method: "PUT",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(updatedEquipment),
-    //   });
-    console.log("Update:", item._id);
-  };
+  // const handleUpdate = (item: TOwnerEquipment) => {
+  //   // TODO (you): open your edit page / form (router is set up above).
+  //   //
+  //   //   router.push(`/dashboard/owner/update-equipment/${item._id}`);
+  //   //
+  //   // Tip: your update form can be a copy of the Add Equipment form —
+  //   // pre-fill it with `item` (defaultValue={item.name} …) and on submit
+  //   // send PUT / PATCH instead of POST:
+  //   //
+  //   //   await fetch(`/api/equipment/${item._id}`, {
+  //   //     method: "PUT",
+  //   //     headers: { "Content-Type": "application/json" },
+  //   //     body: JSON.stringify(updatedEquipment),
+  //   //   });
+  //   console.log("Update:", item._id);
+  // };
 
   /* ──────────────────────────────────────────────────────────
      ▸ DELETE  (remove one row)
-     ────────────────────────────────────────────────────────── */
-  const handleDelete = async (item: TOwnerEquipment) => {
-    // STEP 1 — always ask the user first.
-    // if (!window.confirm(`Delete "${item.name}"?`)) return;
-    // (nicer version: use <AlertDialog> from components/ui/alert-dialog)
-
-    // STEP 2 — TODO (you): call your API and delete by _id.
-    // const res = await fetch(`/api/equipment/${item._id}`, {
-    //   method: "DELETE",
-    // });
-    // if (!res.ok) {
-    //   toast.add({ title: "Delete failed", type: "error" });
-    //   return;
-    // }
-
-    // STEP 3 — remove it from the table so the UI updates right away.
-    // setEquipment((previous) => previous.filter((row) => row._id !== item._id));
-
-    toast.add({
-      title: "Demo only",
-      description: "Connect this button to your DELETE API.",
-      type: "info",
-      timeout: 3000,
-    });
-    console.log("Delete:", item._id);
-  };
+     ────────────────────────────────────────────────────────── *
 
   /* ──────────────────────────────────────────────────────────
      HOW TO LOAD REAL DATA (when you are ready)
@@ -268,39 +234,11 @@ const MyEquipmentPage = () => {
                         </Badge>
                       </TableCell>
 
-                      {/* The 3 actions — just UI, handlers are above */}
+                      {/* The 3 actions — all inside a Client Component,
+                          because this page is a Server Component and
+                          cannot pass onClick handlers down itself. */}
                       <TableCell>
-                        <div className="flex items-center justify-end gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="gap-1.5 text-muted-foreground"
-                            onClick={() => handleViewDetails(item)}
-                          >
-                            <EyeIcon />
-                            View Details
-                          </Button>
-
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="gap-1.5"
-                            onClick={() => handleUpdate(item)}
-                          >
-                            <PencilIcon />
-                            Update
-                          </Button>
-
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="gap-1.5 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                            onClick={() => handleDelete(item)}
-                          >
-                            <Trash2Icon />
-                            Delete
-                          </Button>
-                        </div>
+                        <EquipmentRowActions item={item} />
                       </TableCell>
                     </TableRow>
                   ))}

@@ -157,7 +157,7 @@ const AddEquipmentPage = () => {
       terms: values.terms,
 
       // ⑤ The 2 extra pieces of information sent with the form:
-      ownerEmail: user?.email, // TODO (you): useSession → session?.user.email
+      ownerEmail: user?.email ?? "", // TODO (you): useSession → session?.user.email
       status: "pending", // a new listing always starts as pending
     };
 

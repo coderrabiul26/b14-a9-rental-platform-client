@@ -13,3 +13,10 @@ export const addEquipment= async(data: TEquipmentSubmission)=>{
     })
     return res.json()
 }
+
+export const deleteEquipment= async(id:string)=>{
+    const res = await fetch(`${BASE_URL}/api/deleteEquipment/${id}`, {
+      method: "DELETE",
+    });
+    return res.json()
+}
