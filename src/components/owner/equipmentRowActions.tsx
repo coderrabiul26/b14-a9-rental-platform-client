@@ -4,6 +4,8 @@ import { EyeIcon, PencilIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { TOwnerEquipment } from "@/types";
 import { DeleteEquipmentDialogue } from "./deleteEquipment";
+import { useRouter } from "next/navigation";
+
 
 /* ────────────────────────────────────────────────────────────
    The 3 Actions of one table row (View Details / Update / Delete).
@@ -16,6 +18,7 @@ import { DeleteEquipmentDialogue } from "./deleteEquipment";
    down from the page.
    ──────────────────────────────────────────────────────────── */
 export function EquipmentRowActions({ item }: { item: TOwnerEquipment }) {
+  const router= useRouter()
   /* ──────────────────────────────────────────────────────────
      ▸ VIEW DETAILS  (read one row)
      ────────────────────────────────────────────────────────── */
@@ -23,7 +26,7 @@ export function EquipmentRowActions({ item }: { item: TOwnerEquipment }) {
     // TODO (you): show the full equipment info.
     //
     // Option A — separate page (simplest):
-    //   router.push(`/dashboard/owner/my-equipment/${item._id}`);
+      router.push(`/all-equipment/${item._id}`);
     //   → creates a page that reads `params.id` and fetches that one item.
     //
     // Option B — open a dialog/modal on this page and pass `item` to it.

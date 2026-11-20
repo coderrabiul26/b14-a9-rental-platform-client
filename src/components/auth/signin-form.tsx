@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/shared/google-icon";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "../ui/toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 /**
  * Sign in form — UI only.
@@ -18,6 +18,9 @@ import { useRouter } from "next/navigation";
  * - Google: call `signIn.social({ provider: "google" })` in handleGoogle.
  */
 const SignInForm = () => {
+   const searchParams= useSearchParams()
+    const redirectTo= searchParams.get('redirectTo')?? '/'
+    console.log(redirectTo);
 
   const router= useRouter()
 
@@ -30,7 +33,9 @@ const SignInForm = () => {
     }
 
          const {data, error}=await authClient.signIn.email({
-        ...user
+        ...user,
+        rememberMe: true,
+        callbackURL: redirectTo
     })
     console.log(data, error);
     if (data) {

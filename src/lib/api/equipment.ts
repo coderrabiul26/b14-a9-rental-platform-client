@@ -5,6 +5,11 @@ export const getEquipment=async(query: string)=>{
     return res.json()
 }
 
+export const getEquipmentById=async(id: string)=>{
+    const res= await fetch(`${BASE_URL}/api/equipmentDetails/${id}`)
+    return res.json()
+}
+
 export const getAllEquipment=async(query: string)=>{
     const res= await fetch(`${BASE_URL}/api/AllEquipment?${query}`)
     return res.json()

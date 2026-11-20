@@ -3,12 +3,15 @@ import Link from "next/link";
 import AuthShell from "@/components/auth/auth-shell";
 import SignInForm from "@/components/auth/signin-form";
 
+
 export const metadata: Metadata = {
   title: "Sign In | GearGo",
   description: "Sign in to your GearGo account to rent and manage equipment.",
 };
 
 const SigninPage = () => {
+ 
+
   return (
     <AuthShell
       title="Welcome back"
