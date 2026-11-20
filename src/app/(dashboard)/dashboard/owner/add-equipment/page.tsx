@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -32,6 +31,7 @@ import type {
 } from "@/types";
 import { authClient } from "@/lib/auth-client";
 import { addEquipment } from "@/lib/actions/equipment";
+import { useRouter } from "next/navigation";
 
 /* ────────────────────────────────────────────────────────────
    Demo dropdown options — edit these whenever you like.
@@ -90,6 +90,13 @@ const FormField = ({
 const AddEquipmentPage = () => {
   const {data: session}= authClient.useSession()
   const user= session?.user
+
+  const router= useRouter()
+
+  // Changing this key remounts the <form>, which empties EVERY field —
+  // including the dropdowns (a plain form.reset() does NOT clear them,
+  // because Base UI <Select> keeps its own state).
+  const [formKey, setFormKey] = React.useState(0);
   /**
    * Runs when the "Add Equipment" button is clicked.
    *
@@ -100,8 +107,13 @@ const AddEquipmentPage = () => {
     // Stop the browser from reloading the page.
     event.preventDefault();
 
+    // Keep our own reference to the form: React sets `event.currentTarget`
+    // back to null as soon as this handler finishes — and it finishes while
+    // we are still awaiting the API call below.
+    const form = event.currentTarget;
+
     // ① Collect every named field from the form as { name: value } pairs.
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(form);
     const values = Object.fromEntries(
       formData.entries()
     ) as Record<string, string>;
@@ -155,22 +167,13 @@ const AddEquipmentPage = () => {
       model: values.model,
       image: imageUrl, // ← ImgBB link from step ③
       terms: values.terms,
-
-      // ⑤ The 2 extra pieces of information sent with the form:
-      ownerEmail: user?.email ?? "", // TODO (you): useSession → session?.user.email
-      status: "pending", // a new listing always starts as pending
+      ownerEmail: user?.email ?? "", 
+      status: "pending"
     };
 
     const result= await addEquipment(newEquipment)
 
     console.log('added equipment', result);
-
-    // ⑥ TODO (you): send it to your API.
-    //    await fetch("/api/equipment", {
-    //      method: "POST",
-    //      headers: { "Content-Type": "application/json" },
-    //      body: JSON.stringify(newEquipment),
-    //    });
 
     console.log("New equipment ready to submit:", newEquipment);
 
@@ -181,8 +184,14 @@ const AddEquipmentPage = () => {
       timeout: 3000,
     });
 
-    // Clear the form for the next listing.
-    // formData.reset();
+    // ⑤ Clear the form for the next listing.
+    //    A new key makes React remount the <form> from scratch, so text
+    //    inputs, the file picker AND the three dropdowns all start empty.
+    setFormKey((key) => key + 1);
+
+    // ⑥ Redirect to "My Equipment" — that page is a Server Component, so
+    //    Next.js fetches the list again and your new item shows up.
+    router.push("/dashboard/owner/my-equipment");
   };
 
   return (
@@ -210,7 +219,7 @@ const AddEquipmentPage = () => {
             </CardDescription>
           </CardHeader>
 
-          <form onSubmit={handleSubmit}>
+          <form key={formKey} onSubmit={handleSubmit}>
             <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {/* Equipment Name */}
               <FormField label="Equipment Name" htmlFor="name">
