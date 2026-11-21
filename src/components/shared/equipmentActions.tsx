@@ -32,6 +32,7 @@ export function EquipmentActions({
   const user= session?.user
   const customerId= user?.id
   // console.log(customerEmail);
+  console.log(user?.role);
 
   // A unit is rentable only when at least one is in stock.
   const isAvailable = equipment.availableQuantity > 0;
@@ -46,6 +47,7 @@ export function EquipmentActions({
              return router.push(`/signin?redirectTo=/all-equipment/${equipment._id}`)
            } 
            else if(user.role==='customer'){
+            router.push('/checkout')
 
             const bookingEquipment={
               equipmentId: equipment._id,
