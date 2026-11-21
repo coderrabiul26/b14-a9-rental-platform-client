@@ -11,3 +11,36 @@ export const getUserPremiumById= async(userId: string)=>{
         return { premium: false }
     }
 }
+
+
+export const getUserProfile = async (email: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/user/profile?email=${encodeURIComponent(email)}`, {
+      cache: "no-store",
+    });
+    return await response.json();
+  } catch {
+    return null;
+  }
+};
+
+export const updateUserProfile = async (profileData: {
+  email: string;
+  name?: string;
+  image?: string;
+  phoneNumber?: string;
+  address?: string;
+}) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/user/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(profileData),
+    });
+    return await response.json();
+  } catch {
+    return { success: false };
+  }
+};

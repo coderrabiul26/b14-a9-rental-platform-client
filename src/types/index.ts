@@ -146,3 +146,54 @@ export type TPaymentRecord = {
   paidAt?: string;
   createdAt: string;
 };
+
+
+/* ────────────────────────────────────────────────────────────
+   Customer Dashboard Types
+   ──────────────────────────────────────────────────────────── */
+
+export type TCustomerBooking = {
+  _id: string;
+  equipmentId: string;
+  equipmentName: string;
+  customerId: string;
+  customerEmail: string;
+  startDate: string;
+  endDate: string;
+  days: number;
+  quantity: number;
+  amount: number;
+  currency: string;
+  rentalType?: TRentalType;
+  unitPrice?: number;
+  contactNumber?: string;
+  deliveryAddress?: string;
+  notes?: string;
+  paymentStatus: "paid" | "pending";
+  paymentId?: string;
+  transactionId?: string;
+  bookingStatus?: "confirmed" | "completed" | "active" | "cancelled";
+  bookingDate?: string | Date;
+  createdAt: string | Date;
+};
+
+export type TCustomerFavourite = {
+  _id: string;
+  equipmentId: string;
+  customerId: string;
+  customerEmail: string;
+  equipmentName: string;
+  createdAt: string | Date;
+};
+
+export type TUserProfile = {
+  _id?: string;
+  name: string;
+  email: string;
+  image?: string | null;
+  role?: string | null;
+  phoneNumber?: string;
+  address?: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+};

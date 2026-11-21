@@ -42,69 +42,70 @@ import Link from "next/link";
  */
 
 
-const roleBasedSidebarItems= {
+const roleBasedSidebarItems: Record<string, { title: string; href: string }[]> = {
     customer:[
+        {
+            title: 'Overview',
+            href: '/dashboard/customer',
+        },
         {
             title: 'My Rentals',
             href: '/dashboard/customer/my-rental',
-            
         },
         {
             title: 'Favourites',
             href: '/dashboard/customer/favourites',
-            
         },
         {
             title: 'Profile',
             href: '/dashboard/customer/profile',
-            
         }
 
     ],
     admin:[
         {
+            title: 'Overview',
+            href: '/dashboard/admin',
+        },
+        {
             title: 'All Users',
             href: '/dashboard/admin/all-users',
-            
         },
         {
             title: 'All Equipment',
             href: '/dashboard/admin/all-equipment',
-            
         },
         {
             title: 'All Rentals',
             href: '/dashboard/admin/all-rentals',
-            
         },
          {
             title: 'My Profile',
             href: '/dashboard/admin/my-profile',
-            
         }
 
 
     ],
     owner:[
         {
+            title: 'Overview',
+            href: '/dashboard/owner',
+        },
+        {
             title: 'Add Equipment',
             href: '/dashboard/owner/add-equipment',
-            
         },
         {
             title: 'My Equipment',
             href: '/dashboard/owner/my-equipment',
-            
         },
         {
             title: 'My Equipment Rental',
             href: '/dashboard/owner/my-equipment-rental',
-            
         },
          {
             title: 'My Profile',
             href: '/dashboard/owner/my-profile',
-            
         }
 
     ]
@@ -129,10 +130,8 @@ const DashboardSidebar = async() => {
       });
     
 
-    const role= session?.user.role || 'customer'
-
-
-    const sidebarItems= roleBasedSidebarItems[role]
+    const role = (session?.user?.role as string) || "customer";
+    const sidebarItems = roleBasedSidebarItems[role] || roleBasedSidebarItems.customer;
   
 
   return (
@@ -186,7 +185,7 @@ const DashboardSidebar = async() => {
         <div className="flex items-center gap-2 rounded-lg border border-sidebar-border bg-sidebar-accent/50 p-2">
           <Avatar>
             <AvatarFallback>
-              {session?.user.name
+              {(session?.user?.name || "User")
                 .split(" ")
                 .map((part) => part.charAt(0))
                 .join("")
@@ -198,14 +197,14 @@ const DashboardSidebar = async() => {
           <div className="flex min-w-0 flex-1 flex-col">
             <div className="flex items-center gap-1.5">
               <span className="truncate text-sm font-semibold">
-                {session?.user.name}
+                {session?.user?.name || "Guest"}
               </span>
-              <Badge variant="secondary" className="shrink-0">
-                {session?.user.role}
+              <Badge variant="secondary" className="shrink-0 capitalize">
+                {session?.user?.role || "customer"}
               </Badge>
             </div>
             <span className="truncate text-xs text-sidebar-foreground/70">
-              {session?.user.email}
+              {session?.user?.email || "guest@geargo.com"}
             </span>
           </div>
 
