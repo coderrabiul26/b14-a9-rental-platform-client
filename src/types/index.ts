@@ -83,3 +83,66 @@ export type TOwnerEquipment = TEquipmentSubmission & {
     createdAt: Date
 
 }
+
+/* ────────────────────────────────────────────────────────────
+   Book Equipment → payment flow
+   ──────────────────────────────────────────────────────────── */
+
+/**
+ * What the booking modal sends to `POST /api/prepareBooking` when the
+ * customer presses "Confirm Booking" (the 6 modal fields + who/what).
+ */
+export type TBookingRequest = {
+  equipmentId: string;
+  customerId: string;
+  customerEmail: string;
+  equipmentName: string;
+  /** Rental dates as "YYYY-MM-DD" — exactly what <input type="date"> gives. */
+  startDate: string;
+  endDate: string;
+  quantity: number;
+  contactNumber: string;
+  deliveryAddress: string;
+  /** Optional — the modal lets this stay empty. */
+  notes: string;
+};
+
+/**
+ * One row in the `payments` collection.
+ *
+ * It starts with `payment_status: "pending"` the moment the booking is
+ * confirmed in the modal. Stripe charges its `amount`, and only after
+ * the payment succeeds does `/payment/checkout-verify` flip it to
+ * "paid", write the Stripe transaction details onto it, and create the
+ * actual booking record.
+ */
+export type TPaymentRecord = {
+  _id: string;
+  payment_status: "pending" | "paid";
+  /** The customer's id (same field the premium endpoint looks at). */
+  userId: string;
+  customerEmail: string;
+  equipmentId: string;
+  equipmentName: string;
+  rentalType: TRentalType;
+  /** Price for ONE rental unit (equipment.rentalPrice). */
+  unitPrice: number;
+  startDate: string;
+  endDate: string;
+  /** Inclusive day count: start day and end day both count. */
+  days: number;
+  /** How many rentalType units those days cover (8 Daily days… see API). */
+  units: number;
+  quantity: number;
+  /** Total = unitPrice × units × quantity, in BDT. */
+  amount: number;
+  currency: string;
+  contactNumber: string;
+  deliveryAddress: string;
+  notes: string;
+  /* --- written only after Stripe says the money arrived --- */
+  sessionId?: string;
+  payment_intent?: string;
+  paidAt?: string;
+  createdAt: string;
+};

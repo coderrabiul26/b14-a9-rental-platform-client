@@ -8,8 +8,8 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "../ui/toast";
-import { addBooking, addFavourite } from "@/lib/actions/equipment";
-const BASE_URL= process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'
+import { addFavourite } from "@/lib/actions/equipment";
+import BookingModal from "./bookingModal";
 
 /**
  * The two interactive bits of the equipment details page:
@@ -18,8 +18,10 @@ const BASE_URL= process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'
  * It has to be a CLIENT component — Server Components cannot have `onClick`.
  * The page fetches the data and passes one item down here.
  *
- * Both handlers below are intentionally EMPTY: implement them yourself.
- * Each one has a suggested flow written as comments.
+ * "Book Equipment" only does the login/role checks here and then opens
+ * the booking modal (<BookingModal />) — the modal collects the rental
+ * dates, quantity and contact details, checks availability and sends
+ * the customer to the payment page.
  */
 export function EquipmentActions({
   equipment,
@@ -28,51 +30,32 @@ export function EquipmentActions({
 }) {
   const router= useRouter()
   const [favourite, setFavourite] = useState(false)
+  // Booking modal open/closed (controlled, like the delete dialog).
+  const [showBooking, setShowBooking] = useState(false)
   const {data: session}= authClient.useSession()
   const user= session?.user
-  const customerId= user?.id
-  // console.log(customerEmail);
   console.log(user?.role);
 
   // A unit is rentable only when at least one is in stock.
   const isAvailable = equipment.availableQuantity > 0;
 
   /** Runs when "Book Equipment" is pressed. */
-  const handleBook = async() => {
-    // TODO (you): implement booking. A typical flow —
-    //
-    //   1. Make sure someone is logged in (this is a client component, so
-    //      authClient / useRouter / toast all work here once imported):
+  const handleBook = () => {
+           // ① Not logged in → sign in first, then come back here.
            if (!user){
              return router.push(`/signin?redirectTo=/all-equipment/${equipment._id}`)
-           } 
-           else if(user.role==='customer'){
-            router.push('/checkout')
-
-            const bookingEquipment={
-              equipmentId: equipment._id,
-              customerId: user.id,
-              customerEmail: user.email,
-              equipmentName: equipment.name,
-              createdAt: new Date()
-
-            }
-            // console.log(bookingEquipment);
-            const result= await addBooking(bookingEquipment)
-            // console.log(result);
-            if(result.insertedId){
-               toast.add({ title: 'Booking Successfull!' ,
-                description: 'Your equipment booked successfully'
-               })
-               router.push('/all-equipment')
-              
-              }
            }
-           else{
-            toast.add({ title: 'Failed!' ,
+           // ② Only customers are allowed to book.
+           if (user.role !== 'customer'){
+             toast.add({ title: 'Failed!' ,
                 description: 'Your are not a customer'
                })
+             return
            }
+
+           // ③ Open the booking modal — everything else (dates, quantity,
+           //    availability check, total, payment) happens from there.
+           setShowBooking(true)
   };
 
   /** Runs when the heart icon is pressed. */
@@ -98,8 +81,9 @@ export function EquipmentActions({
                toast.add({ title: 'Add Favourite!' ,
                 description: 'Your equipment added to  successfully'
                })
-               router.push('/all-equipment')
-              
+               // Stay on this page — the heart fills in below, so there
+               // is no need to navigate away.
+               setFavourite(true)
               }
            }
            else{
@@ -134,7 +118,10 @@ export function EquipmentActions({
           onClick={handleFavourite}
           aria-label={`Add ${equipment.name} to favourites`}
         >
-          <HeartIcon className="size-4" />
+          {/* Filled red once the item has been added (see handleFavourite) */}
+          <HeartIcon
+            className={cn("size-4", favourite && "fill-red-500 text-red-500")}
+          />
         </Button>
       </div>
 
@@ -149,6 +136,13 @@ export function EquipmentActions({
           ? `${equipment.availableQuantity} unit(s) ready to rent`
           : "Currently out of stock — booking is unavailable"}
       </p>
+
+      {/* ── Booking modal (opened by handleBook) ──────────── */}
+      <BookingModal
+        equipment={equipment}
+        open={showBooking}
+        onOpenChange={setShowBooking}
+      />
     </div>
   );
 }

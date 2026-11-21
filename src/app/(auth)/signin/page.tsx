@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import AuthShell from "@/components/auth/auth-shell";
 import SignInForm from "@/components/auth/signin-form";
 
@@ -25,7 +26,11 @@ const SigninPage = () => {
         </p>
       }
     >
-      <SignInForm />
+      {/* useSearchParams() inside the form needs a Suspense boundary,
+          otherwise Next.js cannot prerender this page (build error). */}
+      <Suspense fallback={null}>
+        <SignInForm />
+      </Suspense>
     </AuthShell>
   );
 };

@@ -46,7 +46,9 @@ const SignInForm = () => {
         timeout: 3000,
     })
 
-    router.push('/')
+    // Go back to where they came from — e.g. the equipment details page
+    // they tried to book (that is where ?redirectTo=… came from).
+    router.push(redirectTo)
 }
 
 if (error) {
