@@ -8,6 +8,7 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "../ui/toast";
+import { addBooking, addFavourite } from "@/lib/actions/equipment";
 const BASE_URL= process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'
 
 /**
@@ -29,8 +30,8 @@ export function EquipmentActions({
   const [favourite, setFavourite] = useState(false)
   const {data: session}= authClient.useSession()
   const user= session?.user
-  const customerEmail= user?.email
-  console.log(customerEmail);
+  const customerId= user?.id
+  // console.log(customerEmail);
 
   // A unit is rentable only when at least one is in stock.
   const isAvailable = equipment.availableQuantity > 0;
@@ -41,51 +42,71 @@ export function EquipmentActions({
     //
     //   1. Make sure someone is logged in (this is a client component, so
     //      authClient / useRouter / toast all work here once imported):
-           const { data } = await authClient.getSession()
-           if (!user) return router.push("/signin")
-    //
-    //   2. Tell your API about the booking:
-    //        await fetch(`${BASE_URL}/api/bookings`, {
-    //          method: "POST",
-    //          headers: { "Content-Type": "application/json" },
-    //          body: JSON.stringify({
-    //            equipmentId: equipment._id,  // ← WHICH item
-    //            customerEmail: data.user.email,
-    //            quantity: 1,                 // ← or from a quantity input
-    //          }),
-    //        })
-    //
-    //   3. Confirm + navigate:
-    //        toast.add({ title: "Booking requested", type: "success" })
-    //        router.push("/dashboard/customer/my-rental")
+           if (!user){
+             return router.push(`/signin?redirectTo=/all-equipment/${equipment._id}`)
+           } 
+           else if(user.role==='customer'){
+
+            const bookingEquipment={
+              equipmentId: equipment._id,
+              customerId: user.id,
+              customerEmail: user.email,
+              equipmentName: equipment.name,
+              createdAt: new Date()
+
+            }
+            // console.log(bookingEquipment);
+            const result= await addBooking(bookingEquipment)
+            // console.log(result);
+            if(result.insertedId){
+               toast.add({ title: 'Booking Successfull!' ,
+                description: 'Your equipment booked successfully'
+               })
+               router.push('/all-equipment')
+              
+              }
+           }
+           else{
+            toast.add({ title: 'Failed!' ,
+                description: 'Your are not a customer'
+               })
+           }
   };
 
   /** Runs when the heart icon is pressed. */
   const handleFavourite = async() => {
-
-    // TODO (you): implement favourites. A typical flow —
     
            if (!user){
             return router.push(`/signin?redirectTo=/all-equipment/${equipment._id}`)
            }
-    //
-    //   1. Keep a local on/off flag so the heart can fill in:
-          //  const [favourite, setFavourite] = useState(false)
-    //      (add `useState` to the react import at the top)
-       
-    //   2. Tell your API:
-           const res= await fetch(`${BASE_URL}/api/addFavourite`, {
-             method: "POST",
-             headers: { "Content-Type": "application/json" },
-             body: JSON.stringify({ equipmentId: equipment._id, customerEmail }),
-           })
-           const data= await res.json()
-           console.log(data);
-    //
-    //   3. Flip the flag + confirm:
-           setFavourite(!favourite)
-           toast.add({ title: favourite ? "Removed from favourites" : "Added to favourites" })
-    //
+           else if(user.role==='customer'){
+               const favouriteEquipment={
+              equipmentId: equipment._id,
+              customerId: user.id,
+              customerEmail: user.email,
+              equipmentName: equipment.name,
+              createdAt: new Date()
+
+            }
+            console.log(favouriteEquipment);
+
+           const result= await addFavourite(favouriteEquipment)
+           console.log(result);
+           if(result.insertedId){
+               toast.add({ title: 'Add Favourite!' ,
+                description: 'Your equipment added to  successfully'
+               })
+               router.push('/all-equipment')
+              
+              }
+           }
+           else{
+             toast.add({ title: 'Failed!' ,
+                description: 'Your are not a customer'
+               })
+           }
+          
+
     //   4. Show it filled, e.g. on the icon:
           //  className={cn("size-4", favourite && "fill-red-500 text-red-500")}
   };

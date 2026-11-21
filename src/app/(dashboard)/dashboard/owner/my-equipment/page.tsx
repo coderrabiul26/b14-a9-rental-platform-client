@@ -51,11 +51,11 @@ const MyEquipmentPage = async() => {
     headers: await headers(),
   });
   const user= session?.user
-  console.log(user);
+  // console.log(user);
   
  
     const equipmentData = await getEquipment(`ownerEmail=${user?.email}`);
-    console.log(equipmentData);
+    // console.log(equipmentData);
 
 
 

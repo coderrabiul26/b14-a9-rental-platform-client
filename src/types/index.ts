@@ -73,3 +73,13 @@ export type TEquipmentSubmission = {
 export type TOwnerEquipment = TEquipmentSubmission & {
   _id: string;
 };
+
+ export type TBookingEquipment={
+
+    equipmentId: string,
+    customerId: string,
+    customerEmail: string,
+    equipmentName: string,
+    createdAt: Date
+
+}

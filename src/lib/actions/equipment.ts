@@ -1,4 +1,4 @@
-import { TEquipmentSubmission, TOwnerEquipment } from "@/types"
+import { TBookingEquipment, TEquipmentSubmission, TOwnerEquipment } from "@/types"
 import { auth } from "../auth"
 
 const BASE_URL= process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'
@@ -15,6 +15,28 @@ export const addEquipment= async(data: TEquipmentSubmission)=>{
     return res.json()
 }
 
+export const addBooking= async(data: TBookingEquipment)=>{
+    const res= await fetch(`${BASE_URL}/api/addBooking`, {
+        method: 'POST',
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    return res.json()
+}
+
+
+export const addFavourite= async(data: TBookingEquipment)=>{
+    const res= await fetch(`${BASE_URL}/api/addFavourite`, {
+        method: 'POST',
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    return res.json()
+}
 
 export const deleteEquipment= async(id:string)=>{
     const res = await fetch(`${BASE_URL}/api/deleteEquipment/${id}`, {
