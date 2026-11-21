@@ -48,3 +48,41 @@ export const removeCustomerFavourite = async (id: string) => {
     return { success: false };
   }
 };
+
+
+export const getOwnerRentals = async (ownerEmail: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/api/ownerRentals?ownerEmail=${encodeURIComponent(ownerEmail)}`, {
+      cache: "no-store",
+    });
+    return res.json();
+  } catch {
+    return [];
+  }
+};
+
+export const getOwnerAnalytics = async (ownerEmail: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/api/ownerAnalytics?ownerEmail=${encodeURIComponent(ownerEmail)}`, {
+      cache: "no-store",
+    });
+    return res.json();
+  } catch {
+    return null;
+  }
+};
+
+export const updateEquipmentListing = async (id: string, data: Record<string, unknown>) => {
+  try {
+    const res = await fetch(`${BASE_URL}/api/updateEquipment/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  } catch {
+    return { success: false };
+  }
+};

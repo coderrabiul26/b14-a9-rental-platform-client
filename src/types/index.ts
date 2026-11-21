@@ -197,3 +197,42 @@ export type TUserProfile = {
   createdAt?: string | Date;
   updatedAt?: string | Date;
 };
+
+
+/* ────────────────────────────────────────────────────────────
+   Owner Dashboard Types
+   ──────────────────────────────────────────────────────────── */
+
+export type TOwnerRental = {
+  _id: string;
+  equipmentId: string;
+  equipmentName: string;
+  customerId: string;
+  customerEmail: string;
+  startDate: string;
+  endDate: string;
+  days: number;
+  quantity: number;
+  amount: number;
+  currency: string;
+  rentalType?: TRentalType;
+  unitPrice?: number;
+  contactNumber: string;
+  deliveryAddress: string;
+  notes?: string;
+  paymentStatus: "paid" | "pending";
+  paymentId?: string;
+  transactionId?: string;
+  bookingStatus?: "confirmed" | "completed" | "active" | "cancelled";
+  bookingDate?: string | Date;
+  createdAt: string | Date;
+};
+
+export type TOwnerAnalytics = {
+  totalEquipment: number;
+  totalRentals: number;
+  completedRentals: number;
+  activeRentals: number;
+  totalEarnings: number;
+  monthlyEarnings: { month: string; earnings: number }[];
+};
