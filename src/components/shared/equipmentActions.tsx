@@ -34,7 +34,7 @@ export function EquipmentActions({
   const [showBooking, setShowBooking] = useState(false)
   const {data: session}= authClient.useSession()
   const user= session?.user
-  console.log(user?.role);
+  
 
   // A unit is rentable only when at least one is in stock.
   const isAvailable = equipment.availableQuantity > 0;

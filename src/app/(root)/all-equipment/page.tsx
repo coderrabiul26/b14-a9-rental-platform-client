@@ -33,6 +33,7 @@ const AllEquipmentPage = async ({
   //    below, right here, where we control the behaviour.
   const data = await getAllEquipment("");
 
+
   // Only these listings show up on the public page.
   // (Your original spec says approved listings only — this currently
   // filters for "pending", probably to preview your own submissions.
@@ -40,6 +41,7 @@ const AllEquipmentPage = async ({
   let equipments: TOwnerEquipment[] = Array.isArray(data)
     ? data.filter((item: TOwnerEquipment) => item.status === "pending")
     : [];
+    
 
   // Categories that actually exist in the data — these become the radio
   // options in the sidebar, so every category you can see you can filter by.
