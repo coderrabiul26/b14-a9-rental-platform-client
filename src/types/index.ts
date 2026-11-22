@@ -236,3 +236,90 @@ export type TOwnerAnalytics = {
   totalEarnings: number;
   monthlyEarnings: { month: string; earnings: number }[];
 };
+
+/* ────────────────────────────────────────────────────────────
+   Admin Dashboard Types
+   ──────────────────────────────────────────────────────────── */
+
+/** One row from `GET /api/admin/users` — the Admin "All Users" table. */
+export type TAdminUser = {
+  _id: string;
+  name: string;
+  email: string;
+  role: "customer" | "owner" | "admin";
+  image?: string | null;
+  createdAt: string | Date;
+  blocked?: boolean;
+  phoneNumber?: string;
+  address?: string;
+};
+
+/** One row from `GET /api/admin/equipment` — the Admin "All Equipment" table. */
+export type TAdminEquipment = {
+  _id: string;
+  name: string;
+  description: string;
+  category: string;
+  location: string;
+  rentalPrice: number;
+  rentalType: "Daily" | "Weekly" | "Monthly";
+  availableQuantity: number;
+  condition: "New" | "Like New" | "Good" | "Fair";
+  brand: string;
+  model: string;
+  image: string;
+  terms: string;
+  ownerEmail: string;
+  status: "pending" | "approved" | "rejected";
+  createdAt: string | Date;
+  updatedAt?: string | Date;
+  reviewedAt?: string | Date;
+};
+
+/** One row from `GET /api/admin/bookings` — the Admin "All Rentals" table. */
+export type TAdminBooking = {
+  _id: string;
+  equipmentId: string;
+  equipmentName: string;
+  customerId: string;
+  customerEmail: string;
+  customerName: string;
+  customerImage?: string;
+  ownerEmail: string;
+  ownerName: string;
+  startDate: string;
+  endDate: string;
+  days: number;
+  quantity: number;
+  amount: number;
+  currency: string;
+  rentalType?: "Daily" | "Weekly" | "Monthly";
+  unitPrice?: number;
+  contactNumber: string;
+  deliveryAddress: string;
+  notes?: string;
+  paymentStatus: "paid" | "pending";
+  paymentId?: string;
+  transactionId?: string;
+  bookingStatus?: "pending" | "confirmed" | "active" | "completed" | "cancelled";
+  bookingDate?: string | Date;
+  createdAt: string | Date;
+};
+
+/** Response of `GET /api/admin/analytics` (Challenge 3: Admin Analytics). */
+export type TAdminAnalytics = {
+  totalUsers: number;
+  totalCustomers: number;
+  totalOwners: number;
+  totalAdmins: number;
+  totalEquipment: number;
+  pendingApprovals: number;
+  totalBookings: number;
+  completedRentals: number;
+  activeRentals: number;
+  totalPayments: number;
+  /** Sum of every paid row in the `payments` collection (BDT). */
+  totalRevenue: number;
+  /** Bookings created per month for the last 6 months. */
+  monthlyBookings: { month: string; bookings: number }[];
+};
