@@ -51,14 +51,13 @@ export const removeCustomerFavourite = async (id: string) => {
 
 
 export const getOwnerRentals = async (ownerEmail: string) => {
-  try {
-    const res = await fetch(`${BASE_URL}/api/ownerRentals?ownerEmail=${encodeURIComponent(ownerEmail)}`, {
-      cache: "no-store",
-    });
-    return res.json();
-  } catch {
-    return [];
+  const res = await fetch(`${BASE_URL}/api/ownerRentals?ownerEmail=${encodeURIComponent(ownerEmail)}`, {
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to load owner rentals: ${res.status} ${res.statusText}`);
   }
+  return res.json();
 };
 
 export const getOwnerAnalytics = async (ownerEmail: string) => {
