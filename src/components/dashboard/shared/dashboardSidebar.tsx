@@ -2,137 +2,136 @@ import type { LucideIcon } from "lucide-react";
 import {
   BoxesIcon,
   CalendarClockIcon,
-  CreditCardIcon,
+  ClipboardListIcon,
   GaugeCircleIcon,
-  LifeBuoyIcon,
-  LogOutIcon,
-  SettingsIcon,
+  HeartIcon,
+  LayoutDashboardIcon,
+  PackageIcon,
+  PlusCircleIcon,
+  UserCircleIcon,
   UsersIcon,
 } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { TSidebarMenuGroup, TSidebarMenuItem } from "@/types";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Link from "next/link";
+import SidebarLogoutButton from "./sidebarLogoutButton";
 
 /**
- * DEMO DATA — placeholder menu items only.
- *
- * TODO (roles & menu): replace this with the real, role-filtered menu
- * (e.g. fetched per session role) and swap the `<button>` below for a
- * `SidebarMenuButton render={<Link href={item.href} />}`.
+ * Role-based sidebar menu items with icons.
  */
+const roleBasedSidebarItems: Record<
+  string,
+  { title: string; href: string; icon: LucideIcon; badge?: string }[]
+> = {
+  customer: [
+    {
+      title: "Overview",
+      href: "/dashboard/customer",
+      icon: GaugeCircleIcon,
+    },
+    {
+      title: "My Rentals",
+      href: "/dashboard/customer/my-rental",
+      icon: CalendarClockIcon,
+    },
+    {
+      title: "Favourites",
+      href: "/dashboard/customer/favourites",
+      icon: HeartIcon,
+    },
+    {
+      title: "Profile",
+      href: "/dashboard/customer/profile",
+      icon: UserCircleIcon,
+    },
+  ],
+  admin: [
+    {
+      title: "Overview",
+      href: "/dashboard/admin",
+      icon: LayoutDashboardIcon,
+    },
+    {
+      title: "All Users",
+      href: "/dashboard/admin/all-users",
+      icon: UsersIcon,
+    },
+    {
+      title: "All Equipment",
+      href: "/dashboard/admin/all-equipment",
+      icon: PackageIcon,
+    },
+    {
+      title: "All Rentals",
+      href: "/dashboard/admin/all-rentals",
+      icon: ClipboardListIcon,
+    },
+    {
+      title: "My Profile",
+      href: "/dashboard/admin/my-profile",
+      icon: UserCircleIcon,
+    },
+  ],
+  owner: [
+    {
+      title: "Overview",
+      href: "/dashboard/owner",
+      icon: GaugeCircleIcon,
+    },
+    {
+      title: "Add Equipment",
+      href: "/dashboard/owner/add-equipment",
+      icon: PlusCircleIcon,
+    },
+    {
+      title: "My Equipment",
+      href: "/dashboard/owner/my-equipment",
+      icon: BoxesIcon,
+    },
+    {
+      title: "My Equipment Rental",
+      href: "/dashboard/owner/my-equipment-rental",
+      icon: CalendarClockIcon,
+    },
+    {
+      title: "My Profile",
+      href: "/dashboard/owner/my-profile",
+      icon: UserCircleIcon,
+    },
+  ],
+};
 
-
-const roleBasedSidebarItems: Record<string, { title: string; href: string }[]> = {
-    customer:[
-        {
-            title: 'Overview',
-            href: '/dashboard/customer',
-        },
-        {
-            title: 'My Rentals',
-            href: '/dashboard/customer/my-rental',
-        },
-        {
-            title: 'Favourites',
-            href: '/dashboard/customer/favourites',
-        },
-        {
-            title: 'Profile',
-            href: '/dashboard/customer/profile',
-        }
-
-    ],
-    admin:[
-        {
-            title: 'Overview',
-            href: '/dashboard/admin',
-        },
-        {
-            title: 'All Users',
-            href: '/dashboard/admin/all-users',
-        },
-        {
-            title: 'All Equipment',
-            href: '/dashboard/admin/all-equipment',
-        },
-        {
-            title: 'All Rentals',
-            href: '/dashboard/admin/all-rentals',
-        },
-         {
-            title: 'My Profile',
-            href: '/dashboard/admin/my-profile',
-        }
-
-
-    ],
-    owner:[
-        {
-            title: 'Overview',
-            href: '/dashboard/owner',
-        },
-        {
-            title: 'Add Equipment',
-            href: '/dashboard/owner/add-equipment',
-        },
-        {
-            title: 'My Equipment',
-            href: '/dashboard/owner/my-equipment',
-        },
-        {
-            title: 'My Equipment Rental',
-            href: '/dashboard/owner/my-equipment-rental',
-        },
-         {
-            title: 'My Profile',
-            href: '/dashboard/owner/my-profile',
-        }
-
-    ]
-}
 /**
- * DEMO DATA — placeholder signed-in user for the footer.
- * Replace with the real session user once roles are wired up.
- */
-
-
-/**
- * Dashboard sidebar — structure only (no auth / role / routing logic yet).
+ * Dashboard sidebar — role-filtered menu with icons, user card, and logout.
  *
- * Layout: header (logo + collapse trigger) → scrollable menu groups →
- * footer (user card with role badge + logout).
+ * Layout: header (logo) → scrollable menu groups → footer (user card + logout).
  *
  * Must be rendered inside a `<SidebarProvider>` (see `src/app/dashboard/layout.tsx`).
  */
-const DashboardSidebar = async() => {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-      });
-    
+const DashboardSidebar = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-    const role = (session?.user?.role as string) || "customer";
-    const sidebarItems = roleBasedSidebarItems[role] || roleBasedSidebarItems.customer;
-  
+  const role = (session?.user?.role as string) || "customer";
+  const sidebarItems =
+    roleBasedSidebarItems[role] || roleBasedSidebarItems.customer;
 
   return (
     <Sidebar collapsible="offcanvas">
@@ -140,45 +139,38 @@ const DashboardSidebar = async() => {
       <SidebarHeader>
         <div className="flex items-center justify-between gap-2">
           <Logo nameClassName="text-base" />
-          {/* <SidebarTrigger aria-label="Collapse sidebar" /> */}
         </div>
       </SidebarHeader>
 
       <SidebarSeparator />
 
-      {/* ── Menu (demo items) ──────────────────────────────── */}
-      {/* <SidebarContent>
-        {DEMO_MENU.map((group) => (
-          <SidebarGroup key={group.label}>
-            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => (
-                  <SidebarMenuItem key={item.label}>
-                    <SidebarMenuButton isActive={item.isActive} tooltip={item.label}>
-                      <item.icon />
-                      <span>{item.label}</span>
-                    </SidebarMenuButton>
-                    {item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
-      </SidebarContent> */}
-      <SidebarContent>{
-        sidebarItems.map((item)=>{
-            const {title, href}= item;
-            return  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton render={<Link href={item.href} />} tooltip={item.title}>
+      {/* ── Menu ────────────────────────────────────────────── */}
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {sidebarItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      render={<Link href={item.href} />}
+                      tooltip={item.title}
+                    >
+                      <Icon />
                       <span>{item.title}</span>
                     </SidebarMenuButton>
-
+                    {item.badge && (
+                      <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
+                    )}
                   </SidebarMenuItem>
-        })}</SidebarContent>
-        
-     
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
       {/* ── Footer ─────────────────────────────────────────── */}
       <SidebarSeparator />
       <SidebarFooter>
@@ -208,14 +200,7 @@ const DashboardSidebar = async() => {
             </span>
           </div>
 
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="shrink-0 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            aria-label="Log out"
-          >
-            <LogOutIcon />
-          </Button>
+          <SidebarLogoutButton />
         </div>
       </SidebarFooter>
     </Sidebar>

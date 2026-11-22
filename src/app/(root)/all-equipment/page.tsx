@@ -39,7 +39,7 @@ const AllEquipmentPage = async ({
   // filters for "pending", probably to preview your own submissions.
   // Change "pending" → "approved" when you're done testing.)
   let equipments: TOwnerEquipment[] = Array.isArray(data)
-    ? data.filter((item: TOwnerEquipment) => item.status === "pending")
+    ? data.filter((item: TOwnerEquipment) => item.status === "approved")
     : [];
     
 
