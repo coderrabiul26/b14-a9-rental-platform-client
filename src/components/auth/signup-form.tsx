@@ -87,10 +87,11 @@ const SignUpForm = () => {
   };
   console.log('');
 
-  const handleGoogle = () => {
-    // TODO (BetterAuth): authClient.signIn.social({ provider: "google" })
-    // — new Google users should get the Customer role by default.
-    console.log("Continue with Google");
+  const handleGoogle = async() => {
+    const resData = await authClient.signIn.social({
+    provider: "google",
+  });
+    console.log("Continue with Google", resData);
   };
 
   return (

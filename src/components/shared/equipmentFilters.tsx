@@ -108,21 +108,6 @@ export function EquipmentFilters({
 
   const router = useRouter();
 
-  // ── Refresh = fresh start ───────────────────────────────────
-  // A refresh (F5 / Ctrl+R) re-reads the URL, so any filter saved in it
-  // would come straight back. Requirement: after a refresh the page must
-  // look exactly like the FIRST render — every filter cleared and ALL
-  // equipment shown. So once on mount, if the URL carries a query string,
-  // we replace it with the clean path and the page re-renders unfiltered.
-  //
-  // This runs ONLY when the page is actually (re)loaded: clicking a filter
-  // re-renders this same component, so it does NOT reset your choices.
-  React.useEffect(() => {
-    if (window.location.search) {
-      router.replace(window.location.pathname);
-    }
-  }, [router]);
-
   /** SEARCH — runs when the search form is submitted (Enter / Search button). */
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
