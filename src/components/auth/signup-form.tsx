@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/shared/google-icon";
+import { ImgbbUpload } from "@/components/shared/imgbb-upload";
 import { toast } from "@/components/ui/toast";
 import { authClient } from "@/lib/auth-client";
 import { TUser } from "@/types";
@@ -91,7 +92,6 @@ const SignUpForm = () => {
     const resData = await authClient.signIn.social({
     provider: "google",
   });
-    console.log("Continue with Google", resData);
   };
 
   return (
@@ -151,8 +151,10 @@ const SignUpForm = () => {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="photo">Photo URL</Label>
-          <div className="relative">
+          {/* <Label htmlFor="photo">Photo URL</Label> */}
+          {/* Upload straight to ImgBB — fills the field below on success. */}
+          <ImgbbUpload onUploaded={setPhotoUrl} currentUrl={photoUrl} />
+          {/* <div className="relative">
             <ImageIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               id="photo"
@@ -163,10 +165,10 @@ const SignUpForm = () => {
               value={photoUrl}
               onChange={(event) => setPhotoUrl(event.target.value)}
             />
-          </div>
-          <p className="text-xs text-muted-foreground">
+          </div> */}
+          {/* <p className="text-xs text-muted-foreground">
             Direct image link or imgbb upload.
-          </p>
+          </p> */}
         </div>
 
         <div className="flex flex-col gap-1.5">

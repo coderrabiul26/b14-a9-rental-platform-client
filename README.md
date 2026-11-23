@@ -3,11 +3,11 @@
 
 A modern full-stack equipment rental marketplace that connects equipment owners with customers. Owners can list and manage their equipment, while customers can explore available equipment, book rentals, and complete secure online payments.
 
-🌐 **Live Website:** YOUR_FRONTEND_LIVE_URL
+🌐 **Live Website:** (https://b14-a9-rental-platform-client.vercel.app/)
 
-💻 **Client Repository:** YOUR_CLIENT_GITHUB_URL
+💻 **Client Repository:** https://github.com/coderrabiul26/b14-a9-rental-platform-client.git
 
-⚙️ **Server Repository:** YOUR_SERVER_GITHUB_URL
+⚙️ **Server Repository:** https://github.com/coderrabiul26/b14-a9-rental-platform-server.git
 
 ---
 

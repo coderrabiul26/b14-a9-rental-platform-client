@@ -63,8 +63,10 @@ console.log(data);
 
   };
 
-  const handleGoogle = () => {
-    console.log("Continue with Google");
+ const handleGoogle = async() => {
+    const resData = await authClient.signIn.social({
+    provider: "google",
+  });
   };
 
   return (

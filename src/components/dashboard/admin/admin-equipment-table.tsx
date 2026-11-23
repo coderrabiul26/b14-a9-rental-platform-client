@@ -174,7 +174,6 @@ export default function AdminEquipmentTable({ initialEquipment }: AdminEquipment
               <TableHead className="font-bold">Location</TableHead>
               <TableHead className="font-bold">Qty</TableHead>
               <TableHead className="font-bold">Status</TableHead>
-              <TableHead className="font-bold">Added</TableHead>
               <TableHead className="text-right font-bold">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -254,14 +253,6 @@ export default function AdminEquipmentTable({ initialEquipment }: AdminEquipment
 
                   {/* Status */}
                   <TableCell>{getStatusBadge(item.status)}</TableCell>
-
-                  {/* Added Date */}
-                  <TableCell className="text-sm">
-                    <div className="flex items-center gap-1.5 text-muted-foreground">
-                      <ClockIcon className="size-3.5 shrink-0" />
-                      <span>{formatDate(item.createdAt)}</span>
-                    </div>
-                  </TableCell>
 
                   {/* Actions */}
                   <TableCell className="text-right">

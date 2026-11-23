@@ -1,9 +1,10 @@
 "use client";
 
-import { EyeIcon, PencilIcon } from "lucide-react";
+import { EyeIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { TOwnerEquipment } from "@/types";
 import { DeleteEquipmentDialogue } from "./deleteEquipment";
+import { UpdateEquipmentModal } from "./updateEquipmentModal";
 import { useRouter } from "next/navigation";
 
 
@@ -38,24 +39,10 @@ export function EquipmentRowActions({ item }: { item: TOwnerEquipment }) {
 
   /* ──────────────────────────────────────────────────────────
      ▸ UPDATE  (edit one row)
+     Handled by <UpdateEquipmentModal /> — a client component that
+     pre-fills the form with `item` and PUTs the changes to
+     /api/updateEquipment/:id, then refreshes the server page.
      ────────────────────────────────────────────────────────── */
-  const handleUpdate = (item: TOwnerEquipment) => {
-    // TODO (you): open your edit page / form.
-    //
-    //   const router = useRouter();   // ← import from "next/navigation"
-    //   router.push(`/dashboard/owner/update-equipment/${item._id}`);
-    //
-    // Tip: your update form can be a copy of the Add Equipment form —
-    // pre-fill it with `item` (defaultValue={item.name} …) and on submit
-    // send PUT / PATCH instead of POST:
-    //
-    //   await fetch(`/api/equipment/${item._id}`, {
-    //     method: "PUT",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(updatedEquipment),
-    //   });
-    console.log("Update:", item._id);
-  };
 
   return (
     <div className="flex items-center justify-end gap-1">
@@ -69,15 +56,8 @@ export function EquipmentRowActions({ item }: { item: TOwnerEquipment }) {
         View Details
       </Button>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        className="gap-1.5"
-        onClick={() => handleUpdate(item)}
-      >
-        <PencilIcon />
-        Update
-      </Button>
+      {/* Update opens the edit modal (pre-filled form → PUT → refresh) */}
+      <UpdateEquipmentModal item={item} />
 
       {/* Already a Client Component — just pass the data */}
       <DeleteEquipmentDialogue item={item} />

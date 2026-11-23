@@ -145,6 +145,7 @@ export default async function Home() {
   let equipments: TOwnerEquipment[] = [];
   try {
     const data = await getAllEquipment("status=approved&limit=6");
+    
 
     if (Array.isArray(data) && data.length > 0) {
       // In case backend returns all items, filter for approved

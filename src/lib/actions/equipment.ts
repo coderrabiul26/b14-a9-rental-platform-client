@@ -1,5 +1,5 @@
 import { TBookingEquipment, TBookingRequest, TEquipmentSubmission, TOwnerEquipment } from "@/types"
-import { auth } from "../auth"
+import { authHeaders } from "@/lib/auth-token"
 
 const BASE_URL= process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'
 
@@ -7,9 +7,7 @@ const BASE_URL= process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'
 export const addEquipment= async(data: TEquipmentSubmission)=>{
     const res= await fetch(`${BASE_URL}/api/addEquipment`, {
         method: 'POST',
-        headers:{
-            'Content-Type': 'application/json'
-        },
+        headers: await authHeaders(),
         body: JSON.stringify(data)
     })
     return res.json()
@@ -18,9 +16,7 @@ export const addEquipment= async(data: TEquipmentSubmission)=>{
 export const addBooking= async(data: TBookingEquipment)=>{
     const res= await fetch(`${BASE_URL}/api/addBooking`, {
         method: 'POST',
-        headers:{
-            'Content-Type': 'application/json'
-        },
+        headers: await authHeaders(),
         body: JSON.stringify(data)
     })
     return res.json()
@@ -38,9 +34,10 @@ export const addBooking= async(data: TBookingEquipment)=>{
 export const prepareBooking= async(data: TBookingRequest)=>{
     const res= await fetch(`${BASE_URL}/api/prepareBooking`, {
         method: 'POST',
-        headers:{
-            'Content-Type': 'application/json'
-        },
+        // Protected by `verifyToken` + `verifyRenter` on the API side — a
+        // request without `Authorization` is rejected with 401 before the
+        // booking is ever validated.
+        headers: await authHeaders(),
         body: JSON.stringify(data)
     })
     return res.json()
@@ -50,9 +47,7 @@ export const prepareBooking= async(data: TBookingRequest)=>{
 export const addFavourite= async(data: TBookingEquipment)=>{
     const res= await fetch(`${BASE_URL}/api/addFavourite`, {
         method: 'POST',
-        headers:{
-            'Content-Type': 'application/json'
-        },
+        headers: await authHeaders(),
         body: JSON.stringify(data)
     })
     return res.json()
@@ -61,6 +56,7 @@ export const addFavourite= async(data: TBookingEquipment)=>{
 export const deleteEquipment= async(id:string)=>{
     const res = await fetch(`${BASE_URL}/api/deleteEquipment/${id}`, {
       method: "DELETE",
+      headers: await authHeaders(),
     });
     return res.json()
 }

@@ -1,3 +1,5 @@
+import { serverAuthHeaders } from "@/lib/auth-token.server";
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
 /**
@@ -6,12 +8,17 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
  * Every endpoint lives on the Express server (`/api/admin/...`) and is
  * only ever called from Server Components, so nothing here is exposed
  * to the browser bundle.
+ *
+ * All endpoints are protected by Express JWT middlewares (`verifyToken` +
+ * `verifyAdmin`), so every request forwards the JWT access token via
+ * `serverAuthHeaders()`.
  */
 
 /** Challenge 3 — platform-wide numbers for the admin overview page. */
 export const getAdminAnalytics = async () => {
   const res = await fetch(`${BASE_URL}/api/admin/analytics`, {
     cache: "no-store",
+    headers: await serverAuthHeaders(),
   });
   if (!res.ok) {
     throw new Error(`Failed to load admin analytics: ${res.status} ${res.statusText}`);
@@ -23,6 +30,7 @@ export const getAdminAnalytics = async () => {
 export const getAdminUsers = async () => {
   const res = await fetch(`${BASE_URL}/api/admin/users`, {
     cache: "no-store",
+    headers: await serverAuthHeaders(),
   });
   if (!res.ok) {
     throw new Error(`Failed to load admin users: ${res.status} ${res.statusText}`);
@@ -34,7 +42,7 @@ export const getAdminUsers = async () => {
 export const updateUserRole = async (userId: string, role: string) => {
   const res = await fetch(`${BASE_URL}/api/admin/users/${userId}/role`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: await serverAuthHeaders(),
     body: JSON.stringify({ role }),
   });
   return res.json();
@@ -44,7 +52,7 @@ export const updateUserRole = async (userId: string, role: string) => {
 export const updateUserBlocked = async (userId: string, blocked: boolean) => {
   const res = await fetch(`${BASE_URL}/api/admin/users/${userId}/block`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: await serverAuthHeaders(),
     body: JSON.stringify({ blocked }),
   });
   return res.json();
@@ -54,7 +62,10 @@ export const updateUserBlocked = async (userId: string, blocked: boolean) => {
 export const getAdminEquipment = async (status?: string) => {
   const url = new URL(`${BASE_URL}/api/admin/equipment`);
   if (status) url.searchParams.set("status", status);
-  const res = await fetch(url.toString(), { cache: "no-store" });
+  const res = await fetch(url.toString(), {
+    cache: "no-store",
+    headers: await serverAuthHeaders(),
+  });
   if (!res.ok) {
     throw new Error(`Failed to load admin equipment: ${res.status} ${res.statusText}`);
   }
@@ -65,7 +76,7 @@ export const getAdminEquipment = async (status?: string) => {
 export const updateEquipmentStatus = async (equipmentId: string, status: string) => {
   const res = await fetch(`${BASE_URL}/api/admin/equipment/${equipmentId}/status`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: await serverAuthHeaders(),
     body: JSON.stringify({ status }),
   });
   return res.json();
@@ -75,6 +86,7 @@ export const updateEquipmentStatus = async (equipmentId: string, status: string)
 export const deleteAdminEquipment = async (equipmentId: string) => {
   const res = await fetch(`${BASE_URL}/api/deleteEquipment/${equipmentId}`, {
     method: "DELETE",
+    headers: await serverAuthHeaders(),
   });
   return res.json();
 };
@@ -83,6 +95,7 @@ export const deleteAdminEquipment = async (equipmentId: string) => {
 export const getAdminBookings = async () => {
   const res = await fetch(`${BASE_URL}/api/admin/bookings`, {
     cache: "no-store",
+    headers: await serverAuthHeaders(),
   });
   if (!res.ok) {
     throw new Error(`Failed to load admin bookings: ${res.status} ${res.statusText}`);
@@ -94,7 +107,7 @@ export const getAdminBookings = async () => {
 export const updateBookingStatus = async (bookingId: string, bookingStatus: string) => {
   const res = await fetch(`${BASE_URL}/api/admin/bookings/${bookingId}/status`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: await serverAuthHeaders(),
     body: JSON.stringify({ bookingStatus }),
   });
   return res.json();
