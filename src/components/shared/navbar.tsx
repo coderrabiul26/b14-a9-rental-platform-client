@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/sheet";
 import { Logo } from "./logo";
 import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
+import LogoutButton from "./logout-button";
 
 /** Public navigation links (optional menu items are intentionally excluded). */
 const NAV_LINKS = [
@@ -35,6 +37,8 @@ const activeLinkClasses = "bg-primary/10 text-primary hover:bg-primary/10 hover:
  */
 const Navbar = () => {
   const pathname = usePathname();
+   const {data:session}=authClient.useSession()
+   const user=session?.user
 
   return (
     <div className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
@@ -94,9 +98,9 @@ const Navbar = () => {
               ))}
             </nav>
 
-            {/* Mobile auth actions — TODO: swap for Dashboard/Logout when auth exists */}
-            <div className="mt-auto flex flex-col gap-2 p-4">
+            {!user?<><div className="mt-auto flex flex-col gap-2 p-4">
               <Button
+                nativeButton={false}
                 variant="outline"
                 size="lg"
                 className="w-full"
@@ -104,10 +108,26 @@ const Navbar = () => {
               >
                 Login
               </Button>
-              <Button size="lg" className="w-full" render={<Link href="/signup" />}>
+              <Button nativeButton={false} size="lg" className="w-full" render={<Link href="/signup" />}>
                 Register
               </Button>
-            </div>
+            </div></>:<><div className="mt-auto flex flex-col gap-2 p-4">
+              <Button
+                nativeButton={false}
+                variant="outline"
+                size="lg"
+                className="w-full"
+                render={<Link href={`/dashboard/${session.user?.role || 'customer'}`} />}
+              >
+                Dashboard
+              </Button>
+              
+              <Button nativeButton={false} size="lg" className="w-full" render={<Link href="/signup" />}>
+                <LogoutButton />
+              </Button>
+            </div></>
+            /* Mobile auth actions — TODO: swap for Dashboard/Logout when auth exists */}
+            
           </SheetContent>
         </Sheet>
       </div>
